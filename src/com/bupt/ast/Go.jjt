@@ -16,7 +16,7 @@ options {
   NODE_USES_PARSER = true;
   OUTPUT_DIRECTORY = "gcc";
 
-  NODE_PACKAGE="softtest.ast.gccparser.c";
+  NODE_PACKAGE="com.bupt.ast";
 }
 
 PARSER_BEGIN(Go)
@@ -132,8 +132,7 @@ TOKEN : {
 	<FOR: "for"> |
 	<TYPE:"type">|
 	<IF: "if"> |
-	<DO: "do"> |
-	<EOF:"eof" >
+	<DO: "do">
 }
 
 TOKEN : {
