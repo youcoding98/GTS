@@ -26,35 +26,46 @@ public class Go
 {
   public static void main(String args []) throws ParseException
   {
-    Go parser = new Go(System.in);
-    while (true)
+    Go parser;
+    if (args.length == 0)
     {
-      System.out.println("Reading from standard input...");
-      System.out.print("Enter enter some Golang :");
-      try
-      {
-        switch (Go.one_line())
-        {
-          case 0 :
-          System.out.println("OK.");
-          break;
-          default :
-          break;
-        }
-      }
-      catch (Exception e)
-      {
-        System.out.println("NOK.");
-        System.out.println(e.getMessage());
-        Go.ReInit(System.in);
-      }
-      catch (Error e)
-      {
-        System.out.println("Oops.");
-        System.out.println(e.getMessage());
-        break;
-      }
+        System.out.println("Reading from standard input...");
+        System.out.print("Enter enter some Golang :");
+        parser = new Go(System.in);
     }
+    else if (args.length == 1)
+    {
+        System.out.println("Go Parser:  Reading from file " + args [0] + " . . .");
+        try
+         {
+             parser = new Go(new FileInputStream(args [0]), "UTF-8");
+         }
+        catch (java.io.FileNotFoundException e)
+         {
+             System.out.println("Go Parser:  File " + args [0] + " not found.");
+            return;
+         }
+    }
+    else {
+        System.out.println("Go Parser:  Usage is one of:");
+        System.out.println("         Go < inputfile");
+        System.out.println("OR");
+        System.out.println("         Go inputfile");
+        return;
+    }
+    try
+    {
+         SimpleNode n = parser.Program();
+         n.dump("");
+
+         System.out.println("Go parser:  Go program parsed successfully.");
+    }
+    catch (ParseException e)
+    {
+         System.out.println(e.getMessage());
+         System.out.println("Go parser:  Encountered errors during parse.");
+    }
+
   }
 }
 
@@ -403,4 +414,32 @@ void Statements(): { }
     Statement()
   )+
 
+}
+
+ASTProgram Program():
+{}
+{
+  (
+    SourceElements()
+  )?
+  < EOF >
+  {
+    return jjtThis;
+  }
+}
+
+void SourceElements() #void :
+{}
+{
+  (
+    SourceElement()
+  )+
+}
+
+void SourceElement() #void :
+{}
+{
+  LOOKAHEAD(FunctionDeclaration())
+  FunctionDeclaration()
+| Statement()
 }
